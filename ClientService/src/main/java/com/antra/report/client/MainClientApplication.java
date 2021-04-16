@@ -8,13 +8,13 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class MainClientApplication {
-    @Bean
-    public QueueMessagingTemplate queueMessagingTemplate(
-            AmazonSQSAsync amazonSQSAsync) {
-        return new QueueMessagingTemplate(amazonSQSAsync);
-    }
-    public static void main(String[] args) {
-        SpringApplication.run(MainClientApplication.class, args);
-    }
+	@Bean
+	public QueueMessagingTemplate queueMessagingTemplate(AmazonSQSAsync amazonSQSAsync) {
+		return new QueueMessagingTemplate(amazonSQSAsync);
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(MainClientApplication.class, args);
+	}
 
 }

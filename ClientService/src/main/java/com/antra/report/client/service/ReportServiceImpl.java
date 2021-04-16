@@ -2,6 +2,7 @@ package com.antra.report.client.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.antra.report.client.pojo.reponse.PDFResponseList;
+import com.antra.report.client.pojo.reponse.ExcelResponseList;
 import com.antra.report.client.entity.ExcelReportEntity;
 import com.antra.report.client.entity.PDFReportEntity;
 import com.antra.report.client.entity.ReportRequestEntity;
@@ -34,13 +35,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import com.antra.report.client.pojo.reponse.ReportViewObj;
+
 @Service
 public class ReportServiceImpl implements ReportService {
 	private static final Logger log = LoggerFactory.getLogger(ReportServiceImpl.class);
@@ -94,12 +98,7 @@ public class ReportServiceImpl implements ReportService {
 		ExcelResponse excelResponseupdate = new ExcelResponse();
 		PDFResponse pdfResponseupdate = new PDFResponse();
 
-		// PDFResponse pdfResponse = new PDFResponse();
 		try {
-			// ExcelResponse excelResponse = new ExcelResponse();
-
-//        	CompletableFuture<ExcelResponse> f1 = CompletableFuture.supplyAsync(() ->             
-//        	excelResponse = rs.postForEntity("http://localhost:8888/excel", request, ExcelResponse.class).getBody());
 			CompletableFuture<ExcelResponse> threadexcelresponse = CompletableFuture.supplyAsync(() -> {
 
 				try {
@@ -113,7 +112,6 @@ public class ReportServiceImpl implements ReportService {
 				return null;
 			});
 			excelResponseupdate = threadexcelresponse.get();
-			log.info("hello"+excelResponseupdate);
 			CompletableFuture<PDFResponse> threadpdfresponse = CompletableFuture.supplyAsync(() -> {
 
 				try {
@@ -128,15 +126,12 @@ public class ReportServiceImpl implements ReportService {
 				return null;
 			});
 			pdfResponseupdate = threadpdfresponse.get();
-
-			// excelResponse = rs.postForEntity("http://localhost:8888/excel", request,
-			// ExcelResponse.class).getBody();
 		}
 
 //        try {
 //            pdfResponse = rs.postForEntity("http://localhost:9999/pdf", request, PDFResponse.class).getBody();
 		catch (Exception e) {
-			log.error("PDF Generation Error (Sync) : e", e);
+			log.error("PDF and excel Generation Error (Sync) : e", e);
 //            pdfResponse.setReqId(request.getReqId());
 //            pdfResponse.setFailed(true);
 		} finally {
@@ -207,72 +202,110 @@ public class ReportServiceImpl implements ReportService {
 		String to = "priyanka05vidhate@gmail.com";
 		emailService.sendEmail(to, EmailType.SUCCESS, entity.getSubmitter());
 	}
+	
+	
+	@Override
+	public ResponseEntity<GeneralResponse> updateReport(String reqId, ReportRequest request) {
+		log.info("in updateReport :" + reqId);
+		log.info("request headers :"+ request.getHeaders());
+		log.info("request des :"+ request.getDescription());
+		RestTemplate restTemplate = new RestTemplate();
+		HttpEntity<ReportRequest> httpEntity = new HttpEntity<>(request);
+		ResponseEntity<Boolean> exchangePDF = restTemplate.exchange("http://localhost:9999/pdf/" + reqId,
+				HttpMethod.PUT, httpEntity, Boolean.class);
+		ResponseEntity<Boolean> exchangeExcel = restTemplate.exchange("http://localhost:8888/excel/" + reqId,
+				HttpMethod.PUT, httpEntity, Boolean.class);
+		log.info("Response from PDF :", String.valueOf(exchangePDF.getStatusCode()));
+		log.info("Response from excel :", String.valueOf(exchangeExcel.getStatusCode()));
+		return ResponseEntity.ok(new GeneralResponse());
+	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<ReportViewObj> getReportList() {
 		List<ReportViewObj> list = new ArrayList<ReportViewObj>();
 		RestTemplate restTemplate = new RestTemplate();
-		PDFResponseList response = restTemplate.getForObject(
-				  "http://localhost:9999/pdf/getAllFiles",
-				  PDFResponseList.class);
+		PDFResponseList response = restTemplate.getForObject("http://localhost:9999/pdf/getAllFiles",
+				PDFResponseList.class);
 		List<com.antra.report.client.pojo.reponse.PDFResponse> pdfResponseList = response.getPdfResponseList();
-		for(com.antra.report.client.pojo.reponse.PDFResponse pdfResponse :pdfResponseList) {
-			log.info("in report controller");
+		Map<String,ReportViewObj> pdfResponseMap = new HashMap<String,ReportViewObj>();
+		for (com.antra.report.client.pojo.reponse.PDFResponse pdfResponse : pdfResponseList) {
+			log.info("in report controller :" + pdfResponse.getFileId());
 			log.info(pdfResponse.toString());
-			ReportViewObj reportViewObj = new ReportViewObj();
-			reportViewObj.setId(pdfResponse.getFileId());
-			reportViewObj.setFileName(pdfResponse.getFileName());
-		    reportViewObj.setGeneratedTime(pdfResponse.getGeneratedTime());
-			reportViewObj.setStatus(pdfResponse.getStatus());
-			reportViewObj.setDescription(pdfResponse.getDescription());
-			reportViewObj.setSubmitter(pdfResponse.getSubmitter());
-			list.add(reportViewObj);
+			ReportViewObj reportViewObjPDF = new ReportViewObj();
+			reportViewObjPDF.setPdfFileId(pdfResponse.getFileId());
+			reportViewObjPDF.setPdfFileName(pdfResponse.getFileName());
+			reportViewObjPDF.setGeneratedTime(pdfResponse.getGeneratedTime());
+			reportViewObjPDF.setPdfStatus(pdfResponse.getStatus());
+			reportViewObjPDF.setDescription(pdfResponse.getDescription());
+			reportViewObjPDF.setSubmitter(pdfResponse.getSubmitter());
+			reportViewObjPDF.setFileData(pdfResponse.getData());
+			pdfResponseMap.put(pdfResponse.getReqId(), reportViewObjPDF);
 		}
-		log.info("size of list is "+list.size());
+
+		RestTemplate excelRestTemplate = new RestTemplate();
+
+		ExcelResponseList responseExcel = excelRestTemplate.getForObject("http://localhost:8888/excel/getAllFiles",
+				ExcelResponseList.class);
+		List<com.antra.report.client.pojo.reponse.ExcelResponse> excelResponseList = responseExcel
+				.getExcelfileResponseList();
+		for (com.antra.report.client.pojo.reponse.ExcelResponse excelResponse : excelResponseList) {
+			log.info("in report controller");
+			if(pdfResponseMap.containsKey(excelResponse.getReqId())) {
+				log.info("PDF req id found in Excel : " + excelResponse.getReqId());
+				ReportViewObj reportViewObjExcel = pdfResponseMap.get(excelResponse.getReqId());
+				reportViewObjExcel.setExcelFileId(excelResponse.getFileId());
+				reportViewObjExcel.setExcelFileName(excelResponse.getFileName());
+				reportViewObjExcel.setExcelStatus(excelResponse.getStatus());
+				reportViewObjExcel.setReqId(excelResponse.getReqId());
+				list.add(reportViewObjExcel);
+			}
+		}
+		log.info("size of list is " + list.size());
 		return list;
 	}
 
 	@Override
-	public InputStream getFileBodyByReqId(String reqId, FileType type) {
-		log.info("req id ----" + reqId);
-		// ReportRequestEntity entity =
-		// reportRequestRepo.findById(reqId).orElseThrow(RequestNotFoundException::new);
-		if (type == FileType.PDF) {
-//            String fileLocation = entity.getPdfReport().getFileLocation(); // this location is s3 "bucket/key"
-//            String bucket = fileLocation.split("/")[0];
-//            String key = fileLocation.split("/")[1];
-			return s3Client.getObject("reporting-generated-file-priyanka", "File-29b8babd-5a2f-487a-b686-ebe581d91453")
-					.getObjectContent();
-		} else if (type == FileType.EXCEL) {
-			// String fileId = entity.getExcelReport().getFileId();
+    public InputStream getFileBodyByReqId(String reqId, FileType type) {
+        ReportRequestEntity entity = reportRequestRepo.findById(reqId).orElseThrow(RequestNotFoundException::new);
+        if (type == FileType.PDF) {
+            String fileLocation = entity.getPdfReport().getFileLocation(); // this location is s3 "bucket/key"
+            String bucket = fileLocation.split("/")[0];
+            String key = fileLocation.split("/")[1];
+            return s3Client.getObject(bucket, key).getObjectContent();
+        } else if (type == FileType.EXCEL) {
+            String fileId = entity.getExcelReport().getFileId();
 //            String fileLocation = entity.getExcelReport().getFileLocation();
 //            try {
 //                return new FileInputStream(fileLocation);// this location is in local, definitely sucks
 //            } catch (FileNotFoundException e) {
 //                log.error("No file found", e);
 //            }
-			RestTemplate restTemplate = new RestTemplate();
+            RestTemplate restTemplate = new RestTemplate();
 //            InputStream is = restTemplate.execute(, HttpMethod.GET, null, ClientHttpResponse::getBody, fileId);
-			ResponseEntity<Resource> exchange = restTemplate.exchange("http://localhost:8888/excel/{id}/content",
-					HttpMethod.GET, null, Resource.class, reqId);
-			try {
-				return exchange.getBody().getInputStream();
-			} catch (IOException e) {
-				log.error("Cannot download excel", e);
-			}
-		}
-		return null;
-	}
+            ResponseEntity<Resource> exchange = restTemplate.exchange("http://localhost:8888/excel/{id}/content",
+                    HttpMethod.GET, null, Resource.class, fileId);
+            try {
+                return exchange.getBody().getInputStream();
+            } catch (IOException e) {
+                log.error("Cannot download excel",e);
+            }
+        }
+        return null;
+    }
 
 	@Override
-	public ResponseEntity<GeneralResponse> deleteFile(String fileId) {
-		log.info("in pdf delete");
+	public ResponseEntity<GeneralResponse> deleteFile(String reqId) {
+		log.info("in pdf delete :" + reqId);
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<Boolean> exchange = restTemplate.exchange("http://localhost:9999/pdf/delete/" + fileId,
+		ResponseEntity<Boolean> exchangePDF = restTemplate.exchange("http://localhost:9999/pdf/" + reqId,
 				HttpMethod.DELETE, new HttpEntity<String>("some sample body sent along the DELETE request"),
 				Boolean.class);
-		log.info(String.valueOf(exchange.getStatusCode()));
+		ResponseEntity<Boolean> exchangeExcel = restTemplate.exchange("http://localhost:8888/excel/" + reqId,
+				HttpMethod.DELETE, new HttpEntity<String>("some sample body sent along the DELETE request"),
+				Boolean.class);
+		log.info("Response from PDF :", String.valueOf(exchangePDF.getStatusCode()));
+		log.info("Response from PDF :", String.valueOf(exchangeExcel.getStatusCode()));
 		return ResponseEntity.ok(new GeneralResponse());
 	}
 }

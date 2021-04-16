@@ -1,6 +1,5 @@
 package com.antra.evaluation.reporting_system.pojo.report;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,18 +14,27 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 //import lombok.Data;
 //import lombok.NoArgsConstructor;
 
-
 @DynamoDBTable(tableName = "PDFRecord")
 
 public class PDFFil {
+	private String reqId;
 	private String id;
 	private String fileName;
 	private String fileLocation;
 	private String submitter;
 	private Long fileSize;
-    private String description;
-    private LocalDateTime generatedTime;
+	private String description;
+	private LocalDateTime generatedTime;
 	private String status;
+	
+	@DynamoDBTypeConverted(converter = StudentLevelRecordTrailConverter.class)
+	@DynamoDBAttribute(attributeName = "data")
+	private StudentRecordTrail studentLevelRecordTrail;
+	
+
+	public PDFFil() {
+	}
+
 	@Override
 	public String toString() {
 		return "PDFFil [id=" + id + ", fileName=" + fileName + ", fileLocation=" + fileLocation + ", submitter="
@@ -34,31 +42,26 @@ public class PDFFil {
 				+ generatedTime + ", status=" + status + ", studentLevelRecordTrail=" + studentLevelRecordTrail + "]";
 	}
 
-    
-    @DynamoDBAttribute(attributeName = "generatedTime")
-    @DynamoDBTypeConverted(converter = LocalTimeConverter.class)
-    
-    public LocalDateTime getGeneratedTime() {
+	@DynamoDBAttribute(attributeName = "generatedTime")
+	@DynamoDBTypeConverted(converter = LocalTimeConverter.class)
+
+	public LocalDateTime getGeneratedTime() {
 		return generatedTime;
 	}
 
 	public void setGeneratedTime(LocalDateTime generatedTime) {
 		this.generatedTime = generatedTime;
 	}
-	
+
 	@DynamoDBAttribute(attributeName = "filestatus")
-    public String getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
 	public void setStatus(String status) {
 		this.status = status;
 	}
-    
-    @DynamoDBTypeConverted(converter = StudentLevelRecordTrailConverter.class)
-	@DynamoDBAttribute(attributeName = "data")
-    private  StudentRecordTrail  studentLevelRecordTrail;
-    
+
 	public StudentRecordTrail getStudentLevelRecordTrail() {
 		return studentLevelRecordTrail;
 	}
@@ -66,13 +69,17 @@ public class PDFFil {
 	public void setStudentLevelRecordTrail(StudentRecordTrail studentLevelRecordTrail) {
 		this.studentLevelRecordTrail = studentLevelRecordTrail;
 	}
+	
+	@DynamoDBHashKey(attributeName = "reqId")
+	public String getReqId() {
+		return reqId;
+	}
 
-	public PDFFil() {
+	public void setReqId(String reqId) {
+		this.reqId = reqId;
 	}
 	
-	
-
-	@DynamoDBHashKey(attributeName = "fileId")
+	@DynamoDBAttribute(attributeName = "fileId")
 	public String getId() {
 		return id;
 	}

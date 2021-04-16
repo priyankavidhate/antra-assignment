@@ -18,76 +18,95 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 import java.util.stream.Collectors;
 //import com.antra.evaluation.reporting_system.service.PDFService;
 
 @RestController
 public class ReportController {
-    private static final Logger log = LoggerFactory.getLogger(ReportController.class);
+	private static final Logger log = LoggerFactory.getLogger(ReportController.class);
 
-    private final ReportService reportService;
-    public ReportController(ReportService reportService) {
-        this.reportService = reportService;
-    }
+	private final ReportService reportService;
 
-    @GetMapping("/report")
-    public ResponseEntity<GeneralResponse> listReport() {
-        log.info("Got Request to list all report");
-        return ResponseEntity.ok(new GeneralResponse(reportService.getReportList()));
-    }
+	public ReportController(ReportService reportService) {
+		this.reportService = reportService;
+	}
 
-    @PostMapping("/report/sync")
-    public ResponseEntity<GeneralResponse> createReportDirectly(@RequestBody @Validated ReportRequest request) {
-        log.info("Got Request to generate report - sync: {}", request);
-        request.setDescription(String.join(" - ", "Sync", request.getDescription()));
-        return ResponseEntity.ok(new GeneralResponse(reportService.generateReportsSync(request)));
-    }
+	@GetMapping("/report")
+	public ResponseEntity<GeneralResponse> listReport() {
+		log.info("Got Request to list all report");
+		return ResponseEntity.ok(new GeneralResponse(reportService.getReportList()));
+	}
 
-    @PostMapping("/report/async")
-    public ResponseEntity<GeneralResponse> createReportAsync(@RequestBody @Validated ReportRequest request) {
-        log.info("Got Request to generate report - async: {}", request);
-        request.setDescription(String.join(" - ", "Async", request.getDescription()));
-        reportService.generateReportsAsync(request);
-        return ResponseEntity.ok(new GeneralResponse());
-    }
+	@PostMapping("/report/sync")
+	public ResponseEntity<GeneralResponse> createReportDirectly(@RequestBody @Validated ReportRequest request) {		
+		log.info("Got Request to generate report - sync: {}", request);
+		request.setDescription(String.join(" - ", "Sync", request.getDescription()));
+		request.setReqId(UUID.randomUUID().toString());
+		return ResponseEntity.ok(new GeneralResponse(reportService.generateReportsSync(request)));
+	}
 
-    @GetMapping("/report/content/{reqId}/{type}")
-    public void downloadFile(@PathVariable String reqId, @PathVariable FileType type, HttpServletResponse response) throws IOException {
-        log.debug("Got Request to Download File - type: {}, reqid: {}", type, reqId);
-        InputStream fis = reportService.getFileBodyByReqId(reqId, type);
-        String fileType = null;
-        String fileName = null;
-        if(type == FileType.PDF) {
-            fileType = "application/pdf";
-            fileName = "report.pdf";
-        } else if (type == FileType.EXCEL) {
-            fileType = "application/vnd.ms-excel";
-            fileName = "report.xls";
-        }
-        response.setHeader("Content-Type", fileType);
-        response.setHeader("fileName", fileName);
-        if (fis != null) {
-            FileCopyUtils.copy(fis, response.getOutputStream());
-        } else{
-            response.setStatus(500);
-        }
-        log.debug("Downloaded File:{}", reqId);
-    }
+	@PostMapping("/report/async")
+	public ResponseEntity<GeneralResponse> createReportAsync(@RequestBody @Validated ReportRequest request) {
+		log.info("Got Request to generate report - async: {}", request);
+		request.setDescription(String.join(" - ", "Async", request.getDescription()));
+		request.setReqId(UUID.randomUUID().toString());
+		reportService.generateReportsAsync(request);
+		return ResponseEntity.ok(new GeneralResponse());
+	}
 
-     @DeleteMapping("/report/delete/pdf/{reqId}")
-    public ResponseEntity<GeneralResponse>  deletePDFFile(@PathVariable String reqId) {
-    	 String fileId = reqId.substring(4,reqId.length());
-    	 log.info(fileId);
-    	 reportService.deleteFile(fileId);
-    	 return ResponseEntity.ok(new GeneralResponse());	 
-    }
-     
-//   @PutMapping
+	@GetMapping("/report/content/{reqId}/{type}")
+	public void downloadFile(@PathVariable String reqId, @PathVariable FileType type, HttpServletResponse response)
+			throws IOException {
+		log.debug("Got Request to Download File - type: {}, reqid: {}", type, reqId);
+		InputStream fis = reportService.getFileBodyByReqId(reqId, type);
+		String fileType = null;
+		String fileName = null;
+		if (type == FileType.PDF) {
+			fileType = "application/pdf";
+			fileName = "report.pdf";
+		} else if (type == FileType.EXCEL) {
+			fileType = "application/vnd.ms-excel";
+			fileName = "report.xls";
+		}
+		response.setHeader("Content-Type", fileType);
+		response.setHeader("fileName", fileName);
+		if (fis != null) {
+			FileCopyUtils.copy(fis, response.getOutputStream());
+		} else {
+			response.setStatus(500);
+		}
+		log.debug("Downloaded File:{}", reqId);
+	}
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<GeneralResponse> handleValidationException(MethodArgumentNotValidException e) {
-        log.warn("Input Data invalid: {}", e.getMessage());
-        String errorFields = e.getBindingResult().getFieldErrors().stream().map(fe -> String.join(" ",fe.getField(),fe.getDefaultMessage())).collect(Collectors.joining(", "));
-        return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST, errorFields), HttpStatus.BAD_REQUEST);
-    }
+	@DeleteMapping("/report/delete/{reqId}")
+	public ResponseEntity<GeneralResponse> deletePDFFile(@PathVariable String reqId) {		
+		reportService.deleteFile(reqId);
+		return ResponseEntity.ok(new GeneralResponse());
+	}
+
+	@PutMapping("/report/sync/{reqId}")
+	public ResponseEntity<GeneralResponse> updateReportDirectly(@PathVariable String reqId, @RequestBody @Validated ReportRequest request) {				
+		log.info("Got Request to update report - sync: {}", request);
+		request.setDescription(String.join(" - ", "Sync", request.getDescription()));
+		request.setReqId(UUID.randomUUID().toString());
+		return ResponseEntity.ok(new GeneralResponse(reportService.updateReport(reqId, request)));
+	}
+
+	@PutMapping("/report/async/{reqId}")
+	public ResponseEntity<GeneralResponse> updateReportAsync(@RequestBody @Validated ReportRequest request) {
+		log.info("Got Request to generate report - async: {}", request);
+		request.setDescription(String.join(" - ", "Async", request.getDescription()));
+		request.setReqId(UUID.randomUUID().toString());
+		reportService.generateReportsAsync(request);
+		return ResponseEntity.ok(new GeneralResponse());
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<GeneralResponse> handleValidationException(MethodArgumentNotValidException e) {
+		log.warn("Input Data invalid: {}", e.getMessage());
+		String errorFields = e.getBindingResult().getFieldErrors().stream()
+				.map(fe -> String.join(" ", fe.getField(), fe.getDefaultMessage())).collect(Collectors.joining(", "));
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST, errorFields), HttpStatus.BAD_REQUEST);
+	}
 }

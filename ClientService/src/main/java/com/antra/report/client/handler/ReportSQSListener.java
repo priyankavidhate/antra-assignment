@@ -10,27 +10,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReportSQSListener {
 
-    private static final Logger log = LoggerFactory.getLogger(ReportSQSListener.class);
+	private static final Logger log = LoggerFactory.getLogger(ReportSQSListener.class);
 
-    private ReportService reportService;
+	private ReportService reportService;
 
-    public ReportSQSListener(ReportService reportService) {
-        this.reportService = reportService;
-    }
+	public ReportSQSListener(ReportService reportService) {
+		this.reportService = reportService;
+	}
 
-    @SqsListener("PDF_Response_Queue")
-    public void responseQueueListenerPdf(SqsResponse response) {
-        log.info("Get response from sqs : {}", response);
-        //queueListener(request.getPdfRequest());
-        reportService.updateAsyncPDFReport(response);
-    }
+	@SqsListener("PDF_Response_Queue")
+	public void responseQueueListenerPdf(SqsResponse response) {
+		log.info("Get response from sqs : {}", response);
+		// queueListener(request.getPdfRequest());
+		reportService.updateAsyncPDFReport(response);
+	}
 
-    @SqsListener("Excel_Response_Queue")
-    public void responseQueueListenerExcel(SqsResponse response) {
-        log.info("Get response from sqs : {}", response);
-        //queueListener(request.getPdfRequest());
-        reportService.updateAsyncExcelReport(response);
-    }
+	@SqsListener("Excel_Response_Queue")
+	public void responseQueueListenerExcel(SqsResponse response) {
+		log.info("Get response from sqs : {}", response);
+		// queueListener(request.getPdfRequest());
+		reportService.updateAsyncExcelReport(response);
+	}
 
 //    @SqsListener(value = "Excel_Response_Queue", deletionPolicy = SqsMessageDeletionPolicy.NEVER)
 //    public void responseQueueListenerExcelManualAcknowledge(SqsResponse response, Acknowledgment ack) {

@@ -5,70 +5,71 @@ import java.time.LocalDateTime;
 
 @MappedSuperclass
 public class BaseReportEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String fileId;
-    @OneToOne
-    private ReportRequestEntity request;
-    private String fileLocation;
-    private long fileSize;
-    private ReportStatus status;
-    private LocalDateTime createdTime;
-    private LocalDateTime updatedTime;
-    public String getFileId() {
-        return fileId;
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+	private String fileId;
+	@OneToOne
+	private ReportRequestEntity request;
+	private String fileLocation;
+	private long fileSize;
+	private ReportStatus status;
+	private LocalDateTime createdTime;
+	private LocalDateTime updatedTime;
 
-    public void setFileId(String fileId) {
-        this.fileId = fileId;
-    }
+	public String getFileId() {
+		return fileId;
+	}
 
-    public ReportRequestEntity getRequest() {
-        return request;
-    }
+	public void setFileId(String fileId) {
+		this.fileId = fileId;
+	}
 
-    public void setRequest(ReportRequestEntity request) {
-        this.request = request;
-    }
+	public ReportRequestEntity getRequest() {
+		return request;
+	}
 
-    public String getFileLocation() {
-        return fileLocation;
-    }
+	public void setRequest(ReportRequestEntity request) {
+		this.request = request;
+	}
 
-    public void setFileLocation(String fileLocation) {
-        this.fileLocation = fileLocation;
-    }
+	public String getFileLocation() {
+		return fileLocation;
+	}
 
-    public long getFileSize() {
-        return fileSize;
-    }
+	public void setFileLocation(String fileLocation) {
+		this.fileLocation = fileLocation;
+	}
 
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
-    }
+	public long getFileSize() {
+		return fileSize;
+	}
 
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
+	}
 
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
+	public LocalDateTime getCreatedTime() {
+		return createdTime;
+	}
 
-    public LocalDateTime getUpdatedTime() {
-        return updatedTime;
-    }
+	public void setCreatedTime(LocalDateTime createdTime) {
+		this.createdTime = createdTime;
+	}
 
-    public void setUpdatedTime(LocalDateTime updatedTime) {
-        this.updatedTime = updatedTime;
-    }
+	public LocalDateTime getUpdatedTime() {
+		return updatedTime;
+	}
 
-    public ReportStatus getStatus() {
-        return status;
-    }
+	public void setUpdatedTime(LocalDateTime updatedTime) {
+		this.updatedTime = updatedTime;
+	}
 
-    public void setStatus(ReportStatus status) {
-        this.status = status;
-    }
+	public ReportStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ReportStatus status) {
+		this.status = status;
+	}
 }

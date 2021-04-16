@@ -12,22 +12,27 @@ import java.util.concurrent.ConcurrentHashMap;
 @Repository
 public class ExcelRepositoryImpl implements ExcelRepository {
 
-    Map<String, ExcelFile> excelData = new ConcurrentHashMap<>();
+	Map<String, ExcelFile> excelData = new ConcurrentHashMap<>();
 
-    @Override
-    public Optional<ExcelFile> getFileById(String id) {
-        return Optional.ofNullable(excelData.get(id));
-    }
+	@Override
+	public Optional<ExcelFile> getFileById(String id) {
+		return Optional.ofNullable(excelData.get(id));
+	}
 
-    @Override
-    public ExcelFile saveFile(ExcelFile file) {
-        return excelData.put(file.getFileId(), file);
-    }
+	@Override
+	public ExcelFile saveFile(ExcelFile file) {
+		return excelData.put(file.getFileId(), file);
+	}
 
-    @Override
-    public ExcelFile deleteFile(String id) {
-        return excelData.remove(id);
-    }
+	@Override
+	public ExcelFile deleteFile(String id) {
+		return excelData.remove(id);
+	}
+
+	@Override
+	public List<ExcelFile> getFiles() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
-

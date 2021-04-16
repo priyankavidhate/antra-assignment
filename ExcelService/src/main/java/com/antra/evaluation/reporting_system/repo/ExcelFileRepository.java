@@ -15,8 +15,6 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.antra.evaluation.reporting_system.pojo.report.ExcelFil;
 
-
-
 @Repository
 public class ExcelFileRepository {
 	@Autowired
@@ -26,47 +24,45 @@ public class ExcelFileRepository {
 		dynamoDBMapper.save(fileSave);
 		return fileSave;
 	}
-	 public ExcelFil delete(String fileId) {
-	        ExcelFil excelFile = dynamoDBMapper.load(ExcelFil.class, fileId);
-	        dynamoDBMapper.delete(excelFile);
-	        return excelFile;
-	    }
+
+	public ExcelFil delete(String reqId) {
+		ExcelFil excelFile = dynamoDBMapper.load(ExcelFil.class, reqId);
+		dynamoDBMapper.delete(excelFile);
+		return excelFile;
+	}
+
 //	public String delete(String fileId) {
 //		ExcelFil pdfFile = dynamoDBMapper.load(ExcelFil.class, fileId);
 //        dynamoDBMapper.delete(pdfFile);
 //        return "Employee Deleted!";
 //    }
 //	
-	public ExcelFil getFileById(String fileId) {
-        return dynamoDBMapper.load(ExcelFil.class, fileId);
-    }
-	
-	public boolean update(String fileId,ExcelFil fileSave) {
-		 dynamoDBMapper.save(fileSave,
-	                new DynamoDBSaveExpression()
-	        .withExpectedEntry("fileId",
-	                new ExpectedAttributeValue(
-	                        new AttributeValue().withS(fileId)
-	                )));
-	        return true;
-	    }
-	public List<ExcelFil> getAllFiles(){
+	public ExcelFil getFileById(String reqId) {
+		return dynamoDBMapper.load(ExcelFil.class, reqId);
+	}
+
+	public boolean update(String reqId, ExcelFil fileSave) {
+		dynamoDBMapper.save(fileSave, new DynamoDBSaveExpression().withExpectedEntry("reqId",
+				new ExpectedAttributeValue(new AttributeValue().withS(reqId))));
+		return true;
+	}
+
+	public List<ExcelFil> getAllFiles() {
 		DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
 
-        PaginatedScanList<ExcelFil> paginatedScanList = dynamoDBMapper.scan(ExcelFil.class, scanExpression);
-        paginatedScanList.loadAllResults();
+		PaginatedScanList<ExcelFil> paginatedScanList = dynamoDBMapper.scan(ExcelFil.class, scanExpression);
+		paginatedScanList.loadAllResults();
 
-        List<ExcelFil>list = new ArrayList<ExcelFil>(paginatedScanList.size());
+		List<ExcelFil> list = new ArrayList<ExcelFil>(paginatedScanList.size());
 
-        Iterator<ExcelFil> iterator = paginatedScanList.iterator();
-        while (iterator.hasNext()) {
-        	ExcelFil element = iterator.next();
-            list.add(element);
-        }
+		Iterator<ExcelFil> iterator = paginatedScanList.iterator();
+		while (iterator.hasNext()) {
+			ExcelFil element = iterator.next();
+			list.add(element);
+		}
 
-        
-        System.out.println(list.toString());
-        return list;
+		System.out.println(list.toString());
+		return list;
 	}
 //	
 //	public boolean update(String fileId,ExcelFil fileSave) {
@@ -78,4 +74,4 @@ public class ExcelFileRepository {
 //	                )));
 //	        return true;
 //	    }
-} 
+}

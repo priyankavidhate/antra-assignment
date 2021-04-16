@@ -56,30 +56,46 @@ public class PDFGenerationController {
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-
-	@DeleteMapping("/pdf/delete/{id}")
-	public boolean deletePDF(@PathVariable("id") String fileId) {
-		log.info(fileId);
-		return pdfService.deletePDF(fileId);
-	}
-
-	@PutMapping("/pdf/{id}")
-	public boolean update(@PathVariable("id") final String id, @RequestBody PDFRequest request) {
-         return pdfService.updatePDF(id,request);
-	}
 	
+	@PutMapping("/pdf/{id}")
+	public ResponseEntity<Boolean> updateExcel(@PathVariable String id, @RequestBody @Validated PDFRequest request) {
+		log.info("Got request to update excel: {}", request);
+
+		PDFResponse response = new PDFResponse();
+		response.setReqId(request.getReqId());
+		boolean reponse = true;
+
+		try {
+			pdfService.updatePDF(id, request);
+			
+		} 
+		catch (Exception e) {
+			reponse = false;
+		}
+		return new ResponseEntity<>(reponse, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/pdf/{id}")
+	public ResponseEntity<Boolean> deletePDF(@PathVariable("id") String reqId) {
+		log.info("deletePDF :" + reqId);
+		boolean response = pdfService.deletePDF(reqId);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+
 	@GetMapping("/pdf/{id}")
 	public PDFFil getPDF(@PathVariable("id") final String id) {
 		return pdfService.getPDF(id);
 	}
+
 	@GetMapping("/pdf/getAllFiles")
 	public PDFResponseList getAllPDFFiles() {
 		log.info("in getAllPDFFiles");
-		ArrayList<PDFFil> list =new ArrayList<PDFFil>();
+		ArrayList<PDFFil> list = new ArrayList<PDFFil>();
 		list = (ArrayList<PDFFil>) pdfService.getAllFiles();
 		ArrayList<PDFResponse> pdfResponseList = new ArrayList<PDFResponse>();
-		for(PDFFil pdfFil: list) {
-			PDFResponse pdfResponse =new PDFResponse();
+		for (PDFFil pdfFil : list) {
+			PDFResponse pdfResponse = new PDFResponse();
 			pdfResponse.setFileId(pdfFil.getId());
 			pdfResponse.setFileSize(pdfFil.getFileSize());
 			pdfResponse.setGeneratedTime(pdfFil.getGeneratedTime());
@@ -88,14 +104,16 @@ public class PDFGenerationController {
 			pdfResponse.setDescription(pdfFil.getDescription());
 			pdfResponse.setFileLocation(pdfFil.getFileLocation());
 			pdfResponse.setFileName(pdfFil.getFileName());
-			log.info("in  pdf getfiles status "+pdfResponse.getStatus());
+			pdfResponse.setReqId(pdfFil.getReqId());
+			pdfResponse.setData(pdfFil.getStudentLevelRecordTrail().getThisStudentLevelRecords());
+			log.info("in  pdf getfiles status " + pdfResponse.getStatus());
 			pdfResponseList.add(pdfResponse);
-			log.info("getAllPDFFiles, submitter : "+ pdfFil.getSubmitter());
-			log.info("in getAllPDFFiles, pdfResponse :"+ pdfResponse.toString());
+			log.info("getAllPDFFiles, submitter : " + pdfFil.getSubmitter());
+			log.info("in getAllPDFFiles, pdfResponse :" + pdfResponse.toString());
 		}
 		PDFResponseList pdfResList = new PDFResponseList();
 		pdfResList.setPdfResponseList(pdfResponseList);
-		
+
 		return pdfResList;
 	}
 }

@@ -6,13 +6,11 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 
 public class StudentLevelRecordTrailConverter implements DynamoDBTypeConverter<List<Student>, StudentRecordTrail> {
 
-   
-
 	@Override
 	public List<Student> convert(StudentRecordTrail object) {
 		// TODO Auto-generated method stub
 		return object.getThisStudentLevelRecords();
-		
+
 	}
 
 	@Override

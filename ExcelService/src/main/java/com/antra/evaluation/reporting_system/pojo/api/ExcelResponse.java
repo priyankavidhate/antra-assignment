@@ -3,94 +3,111 @@ package com.antra.evaluation.reporting_system.pojo.api;
 import java.time.LocalDateTime;
 
 public class ExcelResponse {
-    private String reqId;
-    private String fileId;
-    private String fileLocation;
-    private String fileDownloadLink;
-    private Long fileSize;
-    private String fileName;
-    private String submitter;
-    private String description;
-    private LocalDateTime generatedTime;
-    private boolean failed;
+	private String reqId;
+	private String fileId;
+	private String fileLocation;
+	private String fileDownloadLink;
+	private Long fileSize;
+	private String fileName;
+	private String submitter;
+	private String description;
+	private LocalDateTime generatedTime;
+	private boolean failed;
+	private String status;
 
-    public String getReqId() {
-        return reqId;
-    }
+	@Override
+	public String toString() {
+		return "ExcelResponse [reqId=" + reqId + ", fileId=" + fileId + ", fileLocation=" + fileLocation
+				+ ", fileDownloadLink=" + fileDownloadLink + ", fileSize=" + fileSize + ", fileName=" + fileName
+				+ ", submitter=" + submitter + ", description=" + description + ", generatedTime=" + generatedTime
+				+ ", failed=" + failed + ", status=" + status + "]";
+	}
 
-    public void setReqId(String reqId) {
-        this.reqId = reqId;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public String getFileId() {
-        return fileId;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public void setFileId(String fileId) {
-        this.fileId = fileId;
-    }
+	public String getReqId() {
+		return reqId;
+	}
 
-    public String getFileLocation() {
-        return fileLocation;
-    }
+	public void setReqId(String reqId) {
+		this.reqId = reqId;
+	}
 
-    public void setFileLocation(String fileLocation) {
-        this.fileLocation = fileLocation;
-    }
+	public String getFileId() {
+		return fileId;
+	}
 
-    public String getFileDownloadLink() {
-        return fileDownloadLink;
-    }
+	public void setFileId(String fileId) {
+		this.fileId = fileId;
+	}
 
-    public void setFileDownloadLink(String fileDownloadLink) {
-        this.fileDownloadLink = fileDownloadLink;
-    }
+	public String getFileLocation() {
+		return fileLocation;
+	}
 
-    public Long getFileSize() {
-        return fileSize;
-    }
+	public void setFileLocation(String fileLocation) {
+		this.fileLocation = fileLocation;
+	}
 
-    public void setFileSize(Long fileSize) {
-        this.fileSize = fileSize;
-    }
+	public String getFileDownloadLink() {
+		return fileDownloadLink;
+	}
 
-    public String getFileName() {
-        return fileName;
-    }
+	public void setFileDownloadLink(String fileDownloadLink) {
+		this.fileDownloadLink = fileDownloadLink;
+	}
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+	public Long getFileSize() {
+		return fileSize;
+	}
 
-    public String getSubmitter() {
-        return submitter;
-    }
+	public void setFileSize(Long fileSize) {
+		this.fileSize = fileSize;
+	}
 
-    public void setSubmitter(String submitter) {
-        this.submitter = submitter;
-    }
+	public String getFileName() {
+		return fileName;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public String getSubmitter() {
+		return submitter;
+	}
 
-    public LocalDateTime getGeneratedTime() {
-        return generatedTime;
-    }
+	public void setSubmitter(String submitter) {
+		this.submitter = submitter;
+	}
 
-    public void setGeneratedTime(LocalDateTime generatedTime) {
-        this.generatedTime = generatedTime;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public boolean isFailed() {
-        return failed;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setFailed(boolean failed) {
-        this.failed = failed;
-    }
+	public LocalDateTime getGeneratedTime() {
+		return generatedTime;
+	}
+
+	public void setGeneratedTime(LocalDateTime generatedTime) {
+		this.generatedTime = generatedTime;
+	}
+
+	public boolean isFailed() {
+		return failed;
+	}
+
+	public void setFailed(boolean failed) {
+		this.failed = failed;
+	}
 }

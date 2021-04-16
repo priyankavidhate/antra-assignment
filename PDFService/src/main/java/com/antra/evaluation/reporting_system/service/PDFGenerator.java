@@ -21,38 +21,38 @@ import java.util.Map;
 
 @Component
 public class PDFGenerator {
-    private static final Logger log = LoggerFactory.getLogger(PDFGenerator.class);
+	private static final Logger log = LoggerFactory.getLogger(PDFGenerator.class);
 
-    public PDFFile generate(PDFRequest request) {
-        Map<String, Object> parameters = new HashMap<>();
+	public PDFFile generate(PDFRequest request) {
+		Map<String, Object> parameters = new HashMap<>();
 
-        parameters.put("desc_str", request.getDescription());
-        StringBuilder data = new StringBuilder();
-        for (List<String> datum : request.getData()) {
-            data.append(String.join(", ", datum));
-            data.append("\r\n");
-        }
-        parameters.put("content_str", String.join(",", request.getHeaders()) + "\r\n" + data.toString());
+		parameters.put("desc_str", request.getDescription());
+		StringBuilder data = new StringBuilder();
+		for (List<String> datum : request.getData()) {
+			data.append(String.join(", ", datum));
+			data.append("\r\n");
+		}
+		parameters.put("content_str", String.join(",", request.getHeaders()) + "\r\n" + data.toString());
 
-        List<Object> itemList = List.of("Empty");
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(itemList);
+		List<Object> itemList = List.of("Empty");
+		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(itemList);
 
-        try {
-            File jaspFile = ResourceUtils.getFile("classpath:Coffee_Landscape.jasper");
-            JasperPrint jprint = JasperFillManager.fillReport(jaspFile.getAbsolutePath(), parameters, dataSource);
-            File temp = File.createTempFile(request.getSubmitter(),"_tmp.pdf");
-            JasperExportManager.exportReportToPdfFile(jprint, temp.getAbsolutePath());
-            PDFFile generatedFile = new PDFFile();
-            generatedFile.setFileLocation(temp.getAbsolutePath());
-            generatedFile.setFileName(temp.getName());
-            generatedFile.setFileSize(temp.length());
-            generatedFile.setDescription(request.getDescription());
-            generatedFile.setSubmitter(request.getSubmitter());
-            log.info("Generated Excel file: {}", generatedFile);
-            return generatedFile;
-        } catch (IOException | JRException e) {
-            log.error("Error in generating PDF file",e);
-            throw new PDFGenerationException();
-        }
-    }
+		try {
+			File jaspFile = ResourceUtils.getFile("classpath:Coffee_Landscape.jasper");
+			JasperPrint jprint = JasperFillManager.fillReport(jaspFile.getAbsolutePath(), parameters, dataSource);
+			File temp = File.createTempFile(request.getSubmitter(), "_tmp.pdf");
+			JasperExportManager.exportReportToPdfFile(jprint, temp.getAbsolutePath());
+			PDFFile generatedFile = new PDFFile();
+			generatedFile.setFileLocation(temp.getAbsolutePath());
+			generatedFile.setFileName(temp.getName());
+			generatedFile.setFileSize(temp.length());
+			generatedFile.setDescription(request.getDescription());
+			generatedFile.setSubmitter(request.getSubmitter());
+			log.info("Generated Excel file: {}", generatedFile);
+			return generatedFile;
+		} catch (IOException | JRException e) {
+			log.error("Error in generating PDF file", e);
+			throw new PDFGenerationException();
+		}
+	}
 }

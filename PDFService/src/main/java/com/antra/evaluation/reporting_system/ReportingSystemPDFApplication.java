@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ReportingSystemPDFApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(ReportingSystemPDFApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(ReportingSystemPDFApplication.class, args);
+	}
 
 }

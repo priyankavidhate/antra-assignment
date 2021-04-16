@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ExcelRepository {
-    Optional<ExcelFile> getFileById(String id);
+	Optional<ExcelFile> getFileById(String id);
 
-    ExcelFile saveFile(ExcelFile file);
+	ExcelFile saveFile(ExcelFile file);
 
-    ExcelFile deleteFile(String id);
+	ExcelFile deleteFile(String id);
 
-    List<ExcelFile> getFiles();
+	List<ExcelFile> getFiles();
 }

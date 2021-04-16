@@ -11,15 +11,28 @@ public class Student {
 	String name;
 
 	String st_class;
+	
+	String score;
 
-	public Student(String id, String name, String st_class) {
+	public Student(String id, String name, String st_class, String sco) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.st_class = st_class;
+		this.score = score;
 	}
+
 	public Student() {
-		
+
+	}
+	
+	@DynamoDBAttribute(attributeName = "score")
+	public String getScore() {
+		return score;
+	}
+
+	public void setScore(String score) {
+		this.score = score;
 	}
 
 	@DynamoDBAttribute(attributeName = "id")
@@ -47,6 +60,11 @@ public class Student {
 
 	public void setSt_class(String st_class) {
 		this.st_class = st_class;
+	}
+	
+	@Override
+	public String toString() {
+		return "Student [id=" + id + ", name=" + name + ", st_class=" + st_class + ", score=" + score + "]";
 	}
 
 }

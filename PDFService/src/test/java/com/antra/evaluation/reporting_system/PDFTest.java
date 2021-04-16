@@ -8,17 +8,17 @@ import java.io.FileNotFoundException;
 
 public class PDFTest {
 
-    @Test
-    public void findFile() throws FileNotFoundException {
-        File f = new File("Coffee_Landscape.jasper");
-        System.out.println(f.exists());
+	@Test
+	public void findFile() throws FileNotFoundException {
+		File f = new File("Coffee_Landscape.jasper");
+		System.out.println(f.exists());
 
-        File file = ResourceUtils.getFile("classpath:Coffee_Landscape.jasper");
-        System.out.println(file.exists());
-    }
+		File file = ResourceUtils.getFile("classpath:Coffee_Landscape.jasper");
+		System.out.println(file.exists());
+	}
 
-    @Test
-    public void pdf() {
+	@Test
+	public void pdf() {
 //        String jasperFileName = "CL.jasper";
 //        Map<String, Object> parameters = new HashMap<>();
 //
@@ -35,5 +35,5 @@ public class PDFTest {
 //        } catch (JRException e) {
 //            throw new PDFGenerationException();
 //        }
-    }
+	}
 }

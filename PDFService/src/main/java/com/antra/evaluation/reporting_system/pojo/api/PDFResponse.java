@@ -1,26 +1,31 @@
 package com.antra.evaluation.reporting_system.pojo.api;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.antra.evaluation.reporting_system.pojo.report.Student;
 
 //import org.springframework.data.mongodb.core.mapping.Document;
 
 //@Document
 public class PDFResponse {
 
-    private String fileId;
+	private String fileId;
 	private String reqId;
-    private String fileName;
-    private String fileLocation;
-    private long fileSize;
-    private boolean failed;
-    private LocalDateTime generatedTime;
-    private String submitter;
-    private String description;
-    private String status;
-    
-    public PDFResponse() {}
-    
-    public String getFileName() {
+	private String fileName;
+	private String fileLocation;
+	private long fileSize;
+	private boolean failed;
+	private LocalDateTime generatedTime;
+	private String submitter;
+	private String description;
+	private String status;
+	private List<Student> data;
+
+	public PDFResponse() {
+	}
+
+	public String getFileName() {
 		return fileName;
 	}
 
@@ -35,7 +40,7 @@ public class PDFResponse {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-    
+
 	public String getSubmitter() {
 		return submitter;
 	}
@@ -60,51 +65,59 @@ public class PDFResponse {
 		this.status = status;
 	}
 
-    public String getFileId() {
-        return fileId;
-    }
+	public String getFileId() {
+		return fileId;
+	}
 
-    public void setFileId(String fileId) {
-        this.fileId = fileId;
-    }
+	public void setFileId(String fileId) {
+		this.fileId = fileId;
+	}
 
-    public String getReqId() {
-        return reqId;
-    }
+	public String getReqId() {
+		return reqId;
+	}
 
-    public void setReqId(String reqId) {
-        this.reqId = reqId;
-    }
+	public void setReqId(String reqId) {
+		this.reqId = reqId;
+	}
 
-    public String getFileLocation() {
-        return fileLocation;
-    }
+	public String getFileLocation() {
+		return fileLocation;
+	}
 
-    public void setFileLocation(String fileLocation) {
-        this.fileLocation = fileLocation;
-    }
+	public void setFileLocation(String fileLocation) {
+		this.fileLocation = fileLocation;
+	}
 
-    public long getFileSize() {
-        return fileSize;
-    }
+	public long getFileSize() {
+		return fileSize;
+	}
 
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
-    }
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
+	}
 
-    public boolean isFailed() {
-        return failed;
-    }
+	public boolean isFailed() {
+		return failed;
+	}
 
-    public void setFailed(boolean failed) {
-        this.failed = failed;
-    }
-    
-    @Override
+	public void setFailed(boolean failed) {
+		this.failed = failed;
+	}	
+
+	@Override
 	public String toString() {
 		return "PDFResponse [fileId=" + fileId + ", reqId=" + reqId + ", fileName=" + fileName + ", fileLocation="
 				+ fileLocation + ", fileSize=" + fileSize + ", failed=" + failed + ", generatedTime=" + generatedTime
 				+ ", submitter=" + submitter + ", description=" + description + ", status=" + status + "]";
+	}
+
+	public List<Student> getData() {
+		return data;
+	}
+
+	public void setData(List<Student>  data) {
+		this.data = data;
 	}
 
 }

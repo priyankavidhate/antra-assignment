@@ -11,18 +11,17 @@ import java.util.Map;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestSendEmail {
 
-    @Autowired
-    private QueueMessagingTemplate queueMessagingTemplate;
+	@Autowired
+	private QueueMessagingTemplate queueMessagingTemplate;
 
-
-    @Test
-    public void testSendingEmail() {
-        Map<String, String> message = new HashMap<>();
-        message.put("to", "priyanka05vidhate@gmail.com");
-        message.put("from", "rohit.vyavahare@gmail.com");
-        message.put("subject", "Test Email");
-        message.put("body", "I did it");
-        message.put("token", "12345");
-        queueMessagingTemplate.convertAndSend("email_queue", message);
-    }
+	@Test
+	public void testSendingEmail() {
+		Map<String, String> message = new HashMap<>();
+		message.put("to", "priyanka05vidhate@gmail.com");
+		message.put("from", "rohit.vyavahare@gmail.com");
+		message.put("subject", "Test Email");
+		message.put("body", "I did it");
+		message.put("token", "12345");
+		queueMessagingTemplate.convertAndSend("email_queue", message);
+	}
 }

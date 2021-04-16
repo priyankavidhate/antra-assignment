@@ -13,17 +13,20 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 public interface ReportService {
-    ReportVO generateReportsSync(ReportRequest request);
+	ReportVO generateReportsSync(ReportRequest request);
 
-    ReportVO generateReportsAsync(ReportRequest request);
+	ReportVO generateReportsAsync(ReportRequest request);
 
-    void updateAsyncPDFReport(SqsResponse response);
+	void updateAsyncPDFReport(SqsResponse response);
 
-    void updateAsyncExcelReport(SqsResponse response);
+	void updateAsyncExcelReport(SqsResponse response);
+	
+	public ResponseEntity<GeneralResponse> updateReport(String reqId, ReportRequest request);
 
-   // List<ReportVO> getReportList();
-    List<ReportViewObj> getReportList() ;
-    InputStream getFileBodyByReqId(String reqId, FileType type);
+	// List<ReportVO> getReportList();
+	List<ReportViewObj> getReportList();
+
+	InputStream getFileBodyByReqId(String reqId, FileType type);
 
 	ResponseEntity<GeneralResponse> deleteFile(String fileId);
 }

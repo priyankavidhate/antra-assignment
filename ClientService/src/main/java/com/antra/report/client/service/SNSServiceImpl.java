@@ -10,22 +10,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class SNSServiceImpl implements SNSService {
 
-    private final NotificationMessagingTemplate notificationMessagingTemplate;
+	private final NotificationMessagingTemplate notificationMessagingTemplate;
 
-    @Value("${app.aws.sns.topic}")
-    private String snsTopic;
+	@Value("${app.aws.sns.topic}")
+	private String snsTopic;
 
-    @Autowired
-    public SNSServiceImpl(AmazonSNS amazonSns) {
-        this.notificationMessagingTemplate = new NotificationMessagingTemplate(amazonSns);
-    }
+	@Autowired
+	public SNSServiceImpl(AmazonSNS amazonSns) {
+		this.notificationMessagingTemplate = new NotificationMessagingTemplate(amazonSns);
+	}
 
-    private void send(Object message) {
-        this.notificationMessagingTemplate.sendNotification(snsTopic, message, null);
-    }
+	private void send(Object message) {
+		this.notificationMessagingTemplate.sendNotification(snsTopic, message, null);
+	}
 
-    @Override
-    public void sendReportNotification(ReportRequest request) {
-        send(request);
-    }
+	@Override
+	public void sendReportNotification(ReportRequest request) {
+		send(request);
+	}
 }

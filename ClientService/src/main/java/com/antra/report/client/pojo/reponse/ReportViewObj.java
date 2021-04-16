@@ -1,6 +1,7 @@
 package com.antra.report.client.pojo.reponse;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,33 +9,57 @@ import org.slf4j.LoggerFactory;
 import com.antra.evaluation.reporting_system.service.PDFServiceImpl;
 
 public class ReportViewObj {
-    private static final Logger log = LoggerFactory.getLogger(ReportViewObj.class);
+	private static final Logger log = LoggerFactory.getLogger(ReportViewObj.class);
 
-	 private String id;
-	 private String fileName;
-	    private String fileLocation;
-	    private String submitter;
-	    private Long fileSize;
-	    private String description;
-	    private LocalDateTime generatedTime;
-	    private String status;
-	    public String getId() {
-		return id;
+	private String reqId;
+	private String pdfFileId;
+	private String pdfFileName;
+	private String pdfFileLocation;
+	private String submitter;
+	private Long pdfFileSize;
+	private String description;
+	private LocalDateTime generatedTime;
+	private String pdfStatus;
+	
+	private String excelFileId;
+	private String excelFileName;
+	private String excelFileLocation;
+	private Long excelFileSize;
+	private String excelStatus;
+	
+	private List<Student> fileData;
+	
+	
+	public String getPdfFileId() {
+		return pdfFileId;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setPdfFileId(String pdfFileId) {
+		this.pdfFileId = pdfFileId;
 	}
-	public String getFileName() {
-		return fileName;
+	public String getExcelFileId() {
+		return excelFileId;
 	}
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setExcelFileId(String excelFileId) {
+		this.excelFileId = excelFileId;
 	}
-	public String getFileLocation() {
-		return fileLocation;
+	
+	public String getReqId() {
+		return reqId;
 	}
-	public void setFileLocation(String fileLocation) {
-		this.fileLocation = fileLocation;
+	public void setReqId(String reqId) {
+		this.reqId = reqId;
+	}
+	public String getPdfFileName() {
+		return pdfFileName;
+	}
+	public void setPdfFileName(String pdfFileName) {
+		this.pdfFileName = pdfFileName;
+	}
+	public String getPdfFileLocation() {
+		return pdfFileLocation;
+	}
+	public void setPdfFileLocation(String pdfFileLocation) {
+		this.pdfFileLocation = pdfFileLocation;
 	}
 	public String getSubmitter() {
 		return submitter;
@@ -42,21 +67,17 @@ public class ReportViewObj {
 	public void setSubmitter(String submitter) {
 		this.submitter = submitter;
 	}
-	public Long getFileSize() {
-		return fileSize;
+	public Long getPdfFileSize() {
+		return pdfFileSize;
 	}
-	public void setFileSize(Long fileSize) {
-		this.fileSize = fileSize;
+	public void setPdfFileSize(Long pdfFileSize) {
+		this.pdfFileSize = pdfFileSize;
 	}
 	public String getDescription() {
-		log.info("get description: "+description);
 		return description;
 	}
 	public void setDescription(String description) {
-		
 		this.description = description;
-		log.info("get description: "+description);
-
 	}
 	public LocalDateTime getGeneratedTime() {
 		return generatedTime;
@@ -64,12 +85,43 @@ public class ReportViewObj {
 	public void setGeneratedTime(LocalDateTime generatedTime) {
 		this.generatedTime = generatedTime;
 	}
-	public String getStatus() {
-		return status;
+	public String getPdfStatus() {
+		return pdfStatus;
 	}
-
-	public void setStatus(String status) {
-		this.status = status;
+	public void setPdfStatus(String pdfStatus) {
+		this.pdfStatus = pdfStatus;
 	}
-
+	public String getExcelFileName() {
+		return excelFileName;
+	}
+	public void setExcelFileName(String excelFileName) {
+		this.excelFileName = excelFileName;
+	}
+	public String getExcelFileLocation() {
+		return excelFileLocation;
+	}
+	public void setExcelFileLocation(String excelFileLocation) {
+		this.excelFileLocation = excelFileLocation;
+	}
+	public Long getExcelFileSize() {
+		return excelFileSize;
+	}
+	public void setExcelFileSize(Long excelFileSize) {
+		this.excelFileSize = excelFileSize;
+	}
+	public String getExcelStatus() {
+		return excelStatus;
+	}
+	public void setExcelStatus(String excelStatus) {
+		this.excelStatus = excelStatus;
+	}
+	public static Logger getLog() {
+		return log;
+	}
+	public List<Student> getFileData() {
+		return fileData;
+	}
+	public void setFileData(List<Student> fileData) {
+		this.fileData = fileData;
+	}
 }

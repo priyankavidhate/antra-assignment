@@ -75,7 +75,6 @@ public class ExcelFileServiceImpl implements ExcelFileService {
 		ExcelFil fileSave = new ExcelFil();
 		try {
 			String id = UUID.randomUUID().toString();
-			fileInfo.setFileId(id);
 			ExcelData data = new ExcelData();
 			data.setTitle(request.getDescription());
 			data.setFileId(id);
@@ -95,48 +94,13 @@ public class ExcelFileServiceImpl implements ExcelFileService {
 			String fileLocation = path.substring(0, path.length() - 1) + data.getFileId() + ".xlsx";
 			XSSFWorkbook excelWorkBook = new XSSFWorkbook();
 
-//            FileOutputStream fileOut = new FileOutputStream(new File(fileLocation));
-//            excelWorkBook.write(fileOut);
-//            fileOut.flush();
-//            fileOut.close();
-//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//            try {
-//                excelWorkBook.write(byteArrayOutputStream);
-//                byteArrayOutputStream.close();
-//            } catch (IOException e) {
-//
-//            	log.error(e.getMessage());
-//            }
-//            ByteArrayInputStream bi = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-//
-//            ObjectMetadata objectMetaData = new ObjectMetadata();
-//            objectMetaData.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
-//            objectMetaData.setContentLength(byteArrayOutputStream.toByteArray().length);
-//            
-//            log.info("in impl, s3Bucket :" + fileLocation + ", id :" + id);
-//            log.info("output streamlength : " + byteArrayOutputStream.toByteArray().length);
-//
-//            s3Client.putObject(new PutObjectRequest(s3Bucket, id, bi, objectMetaData) );
-
-//            File f = new File(fileLocation);   
-//            log.info(f.getAbsolutePath());
-//            s3Client.putObject(s3Bucket,id,f);
-			// log.debug("Uploaded");
-
 			File file = new File(fileLocation);
 			InputStream dataStream = new FileInputStream(file);
 
 			ObjectMetadata metadata = new ObjectMetadata();
-			//metadata.setContentType("aapplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
+			// metadata.setContentType("aapplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
 			metadata.setContentType("application/vnd.ms-excel");
 			s3Client.putObject(new PutObjectRequest(s3Bucket, id, dataStream, metadata));
-			fileInfo.setFileLocation(String.join("/", s3Bucket, id));
-
-			fileInfo.setFileName(generatedFile.getName());
-			fileInfo.setGeneratedTime(LocalDateTime.now());
-			fileInfo.setSubmitter(request.getSubmitter());
-			fileInfo.setFileSize(generatedFile.length());
-			fileInfo.setDescription(request.getDescription());
 
 			List<Student> stuList = new ArrayList<Student>();
 			for (List<String> datum : request.getData()) {
@@ -144,10 +108,12 @@ public class ExcelFileServiceImpl implements ExcelFileService {
 				s.setId(datum.get(0));
 				s.setName(datum.get(1));
 				s.setSt_class(datum.get(2));
+				s.setScore(datum.get(3));
 				stuList.add(s);
 			}
 			LocalTimeConverter timeConObj = new LocalTimeConverter();
-			String time = timeConObj.convert(LocalDateTime.now());
+			
+			fileSave.setReqId(request.getReqId());
 			fileSave.setId(id);
 			fileSave.setFileLocation(String.join("/", s3Bucket, id));
 			fileSave.setFileName(data.getFileId() + ".xlsx");
@@ -156,87 +122,99 @@ public class ExcelFileServiceImpl implements ExcelFileService {
 			fileSave.setSubmitter(request.getSubmitter());
 			fileSave.setFileSize(file.length());
 			fileSave.setDescription(request.getDescription());
+			fileSave.setStatus("completed");
 			StudentRecordTrail sr = new StudentRecordTrail(stuList);
 			sr.getThisStudentLevelRecords();
 			fileSave.setStudentLevelRecordTrail(sr);
 			repository.save(fileSave);
 		} catch (Exception e) {
-//            log.error("Error in generateFile()", e);
-			System.out.println("this is error " + e);
+            log.error("Error in generateFile()", e);
 			// throw new FileGenerationException(e);
 		}
-		// excelRepository.saveFile(fileInfo);
 
 		return fileSave;
 	}
 
 	@Override
-	public ExcelFil deleteExcel(String fileId) {
-
-		ExcelFil excelFil = repository.delete(fileId);
+	public boolean deleteExcel(String reqId) {
+		ExcelFil excelFil = repository.delete(reqId);
 		if (excelFil != null) {
-			deleteFileFromBucket(fileId);
+			log.info("pdf s3 object id :" + excelFil.getId());
+			deleteFileFromBucket(excelFil.getId());		
 		}
-		return excelFil;
+		return true;
 	}
 
 	@Override
-	public boolean updateExcel(String fileId, ExcelRequest request) throws IOException {
-		log.info("in UPDATEEXCEL excel s");
-
-		ExcelFile fileInfo = new ExcelFile();
-		ExcelFil fileSave = new ExcelFil();
-
-		ExcelData data = new ExcelData();
-		data.setTitle(request.getDescription());
-		data.setFileId(fileId);
-		data.setSubmitter(request.getSubmitter());
-		data.setSheets(generateSheet(request));
-
-		File generatedFile = excelGenerationService.generateExcelReport(data);
-		// File temp = File.createTempFile(request.getSubmitter(),"_tmp.pdf");
-		File currDir = new File(".");
-		String path = currDir.getAbsolutePath();
-
-		String fileLocation = path.substring(0, path.length() - 1) + data.getFileId() + ".xlsx";
-		XSSFWorkbook excelWorkBook = new XSSFWorkbook();
-		File file = new File(fileLocation);
-		InputStream dataStream = new FileInputStream(file);
-
-		ObjectMetadata metadata = new ObjectMetadata();
-		metadata.setContentType("aapplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
-		s3Client.putObject(new PutObjectRequest(s3Bucket, fileId, dataStream, metadata));
-		fileInfo.setFileLocation(String.join("/", s3Bucket, fileId));
-
-		fileInfo.setFileName(generatedFile.getName());
-		fileInfo.setGeneratedTime(LocalDateTime.now());
-		fileInfo.setSubmitter(request.getSubmitter());
-		fileInfo.setFileSize(generatedFile.length());
-		fileInfo.setDescription(request.getDescription());
-
-		List<Student> stuList = new ArrayList<Student>();
-		for (List<String> datum : request.getData()) {
-			Student s = new Student();
-			s.setId(datum.get(0));
-			s.setName(datum.get(1));
-			s.setSt_class(datum.get(2));
-			stuList.add(s);
+	public boolean updateExcel(String reqId,ExcelRequest request) throws IOException {
+		try {
+			log.info("in UPDATEEXCEL excel s :" + reqId);
+			deleteExcel(reqId);
+			
+			log.info("updateExcel, generating new excel :" + request.toString());
+	
+			String id = UUID.randomUUID().toString();
+			ExcelFil fileSave = new ExcelFil();
+			ExcelData data = new ExcelData();
+			log.info("printing file data ");
+			List<List<String>> listOfLists = new ArrayList<List<String>>();
+			for(List<String> s : request.getData()) {
+				listOfLists.add(s);
+ 			}
+			request.setData(listOfLists);
+			System.out.println(request.getData());
+			data.setTitle(request.getDescription());
+			data.setFileId(id);
+			data.setSubmitter(request.getSubmitter());
+			data.setSheets(generateSheet(request));
+	
+			File generatedFile = excelGenerationService.generateExcelReport(data);
+			log.info("updateExcel, generatedFile :");
+			File currDir = new File(".");
+			String path = currDir.getAbsolutePath();
+	
+			String fileLocation = path.substring(0, path.length() - 1) + data.getFileId() + ".xlsx";
+			XSSFWorkbook excelWorkBook = new XSSFWorkbook();
+			File file = new File(fileLocation);
+			InputStream dataStream = new FileInputStream(file);
+	
+			ObjectMetadata metadata = new ObjectMetadata();
+			metadata.setContentType("application/vnd.ms-excel");
+			log.info("updateExcel, befores s3Client putObject:");
+			s3Client.putObject(new PutObjectRequest(s3Bucket, id, dataStream, metadata));
+			log.info("updateExcel, after s3Client putObject:");
+			
+	
+			List<Student> stuList = new ArrayList<Student>();
+			for (List<String> datum : request.getData()) {
+				Student s = new Student();
+				s.setId(datum.get(0));
+				s.setName(datum.get(1));
+				s.setSt_class(datum.get(2));
+				s.setScore(datum.get(3));
+				stuList.add(s);
+			}
+			LocalTimeConverter timeConObj = new LocalTimeConverter();
+			String time = timeConObj.convert(LocalDateTime.now());
+			
+			fileSave.setReqId(reqId);
+			fileSave.setId(id);
+			fileSave.setFileLocation(String.join("/", s3Bucket, id));
+			fileSave.setFileName(data.getFileId() + ".xlsx");
+	
+			fileSave.setGeneratedTime(LocalDateTime.now());
+			fileSave.setSubmitter(request.getSubmitter());
+			fileSave.setFileSize(file.length());
+			fileSave.setDescription(request.getDescription());
+			fileSave.setStatus("completed");
+			StudentRecordTrail sr = new StudentRecordTrail(stuList);
+			sr.getThisStudentLevelRecords();
+			fileSave.setStudentLevelRecordTrail(sr);
+			log.info("savin excel file to db :", fileSave.getFileName());
+			repository.save(fileSave);
+		} catch(Exception e) {
+			log.error("Error :", e);
 		}
-		LocalTimeConverter timeConObj = new LocalTimeConverter();
-		String time = timeConObj.convert(LocalDateTime.now());
-		fileSave.setId(fileId);
-		fileSave.setFileLocation(String.join("/", s3Bucket, fileId));
-		fileSave.setFileName(data.getFileId() + ".xlsx");
-
-		fileSave.setGeneratedTime(LocalDateTime.now());
-		fileSave.setSubmitter(request.getSubmitter());
-		fileSave.setFileSize(file.length());
-		fileSave.setDescription(request.getDescription());
-		StudentRecordTrail sr = new StudentRecordTrail(stuList);
-		sr.getThisStudentLevelRecords();
-		fileSave.setStudentLevelRecordTrail(sr);
-		deleteFileFromBucket(fileId);
-		repository.save(fileSave);
 
 		return true;
 	}
@@ -248,9 +226,13 @@ public class ExcelFileServiceImpl implements ExcelFileService {
 	}
 
 	private List<ExcelDataSheet> generateSheet(ExcelRequest request) {
+		log.info("in generate sheet");
 		List<ExcelDataSheet> sheets = new ArrayList<>();
 		ExcelDataSheet sheet = new ExcelDataSheet();
+		log.info("in generateSheet : ", request.getHeaders());	
 		sheet.setHeaders(request.getHeaders().stream().map(ExcelDataHeader::new).collect(Collectors.toList()));
+		
+		log.info("after  set headers :", request.getData());
 		sheet.setDataRows(request.getData().stream()
 				.map(listOfString -> (List<Object>) new ArrayList<Object>(listOfString)).collect(Collectors.toList()));
 		sheet.setTitle("sheet-1");
@@ -288,11 +270,12 @@ public class ExcelFileServiceImpl implements ExcelFileService {
 		// TODO Auto-generated method stub
 		return true;
 	}
+
 	@Override
-    public List<ExcelFil> getAllFiles() {
-	   List<ExcelFil> list = repository.getAllFiles();
-	   return list;
-    }
+	public List<ExcelFil> getAllFiles() {
+		List<ExcelFil> list = repository.getAllFiles();
+		return list;
+	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleUnknownExceptions(Exception e) {
@@ -300,6 +283,5 @@ public class ExcelFileServiceImpl implements ExcelFileService {
 		return new ResponseEntity<>(new ErrorResponse("Something is wrong", HttpStatus.INTERNAL_SERVER_ERROR),
 				HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
-	
+
 }

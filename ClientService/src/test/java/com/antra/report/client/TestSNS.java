@@ -12,29 +12,30 @@ import java.util.List;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestSNS {
 
-    @Autowired
-    SNSService snsService;
+	@Autowired
+	SNSService snsService;
 
-    @Autowired
-    ReportService reportService;
+	@Autowired
+	ReportService reportService;
 
-    @Test
-    public void testReportService() {
-        ReportRequest request = new ReportRequest();
-        request.setSubmitter("Dawei_test");
-        request.setDescription("This is just a test");
-        request.setHeaders(List.of("Id","Name","Age"));
-        request.setData(List.of(List.of("1","Dd","23"),List.of("2","AJ","32")));
-   //     reportService.generateReports(request);
-    }
-    @Test
-    public void testSNSSend() {
-        ReportRequest request = new ReportRequest();
-        request.setSubmitter("Dawei_test");
-        request.setDescription("This is just a test");
-        request.setHeaders(List.of("Id","Name","Age"));
-        request.setData(List.of(List.of("1","Dd","23"),List.of("2","AJ","32")));
+	@Test
+	public void testReportService() {
+		ReportRequest request = new ReportRequest();
+		request.setSubmitter("Dawei_test");
+		request.setDescription("This is just a test");
+		request.setHeaders(List.of("Id", "Name", "Age"));
+		request.setData(List.of(List.of("1", "Dd", "23"), List.of("2", "AJ", "32")));
+		// reportService.generateReports(request);
+	}
 
-  //      snsService.generateReport(request);
-    }
+	@Test
+	public void testSNSSend() {
+		ReportRequest request = new ReportRequest();
+		request.setSubmitter("Dawei_test");
+		request.setDescription("This is just a test");
+		request.setHeaders(List.of("Id", "Name", "Age"));
+		request.setData(List.of(List.of("1", "Dd", "23"), List.of("2", "AJ", "32")));
+
+		// snsService.generateReport(request);
+	}
 }

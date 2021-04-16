@@ -14,41 +14,31 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.util.StringUtils;
+
 @Configuration
 public class DynamoDBConfig {
-    @Value("${cloud.aws.dynamodb.endpoint}")
-    private String amazonDynamoDBEndpoint;
-    @Value("${cloud.aws.credentials.accessKey}")
-    private String amazonAWSAccessKey;
-    @Value("${cloud.aws.credentials.secretKey}")
-    private String amazonAWSSecretKey;
-    
-    @Value("${cloud.aws.region.static}")
-    private String amazonAWSRegion;
-    
-    @Bean
-    public DynamoDBMapper dynamoDBMapper() {
-        return new DynamoDBMapper(buildAmazonDynamoDB());
-    }
+	@Value("${cloud.aws.dynamodb.endpoint}")
+	private String amazonDynamoDBEndpoint;
+	@Value("${cloud.aws.credentials.accessKey}")
+	private String amazonAWSAccessKey;
+	@Value("${cloud.aws.credentials.secretKey}")
+	private String amazonAWSSecretKey;
 
-    private AmazonDynamoDB buildAmazonDynamoDB() {
-        return AmazonDynamoDBClientBuilder
-                .standard()
-                .withEndpointConfiguration(
-                        new AwsClientBuilder.EndpointConfiguration(
-                        		amazonDynamoDBEndpoint,
-                                amazonAWSRegion
-                        )
-                )
-                .withCredentials(
-                        new AWSStaticCredentialsProvider(
-                                new BasicAWSCredentials(
-                                		amazonAWSAccessKey,
-                                		amazonAWSSecretKey
-                                )
-                        )
-                )
-                .build();
-    }
+	@Value("${cloud.aws.region.static}")
+	private String amazonAWSRegion;
+
+	@Bean
+	public DynamoDBMapper dynamoDBMapper() {
+		return new DynamoDBMapper(buildAmazonDynamoDB());
+	}
+
+	private AmazonDynamoDB buildAmazonDynamoDB() {
+		return AmazonDynamoDBClientBuilder.standard()
+				.withEndpointConfiguration(
+						new AwsClientBuilder.EndpointConfiguration(amazonDynamoDBEndpoint, amazonAWSRegion))
+				.withCredentials(new AWSStaticCredentialsProvider(
+						new BasicAWSCredentials(amazonAWSAccessKey, amazonAWSSecretKey)))
+				.build();
+	}
 
 }

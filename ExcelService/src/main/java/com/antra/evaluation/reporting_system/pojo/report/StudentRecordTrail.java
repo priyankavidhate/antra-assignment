@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.lang.NonNull;
 
 public class StudentRecordTrail {
-    private List<Student> thisStudentLevelRecords;
+	private List<Student> thisStudentLevelRecords;
 
-    public StudentRecordTrail(List<Student> thisStudentLevelRecords) {
+	public StudentRecordTrail(List<Student> thisStudentLevelRecords) {
 		super();
 		this.thisStudentLevelRecords = thisStudentLevelRecords;
 	}
@@ -22,7 +22,7 @@ public class StudentRecordTrail {
 
 	public void appendStudentLevelRecord(@NonNull Student studentLevelRecord) {
 
-    	thisStudentLevelRecords.add(studentLevelRecord);
+		thisStudentLevelRecords.add(studentLevelRecord);
 
-    }
+	}
 }

@@ -19,38 +19,35 @@ import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.mockito.ArgumentMatchers.anyString;
 
 public class APITest {
-    @Mock
-    ExcelService excelService;
+	@Mock
+	ExcelService excelService;
 
-    @BeforeEach
-    public void configMock() {
-        MockitoAnnotations.initMocks(this);
-        RestAssuredMockMvc.standaloneSetup(new ExcelGenerationController(excelService, null));
-    }
+	@BeforeEach
+	public void configMock() {
+		MockitoAnnotations.initMocks(this);
+		RestAssuredMockMvc.standaloneSetup(new ExcelGenerationController(excelService, null));
+	}
 
-    @Test
-    public void testFileDownload() throws FileNotFoundException {
-        Mockito.when(excelService.getExcelBodyById(anyString())).thenReturn(new FileInputStream("temp.xlsx"));
-        given().accept("application/json").get("/excel/123abcd/content").peek().
-                then().assertThat()
-                .statusCode(200);
-    }
+	@Test
+	public void testFileDownload() throws FileNotFoundException {
+		Mockito.when(excelService.getExcelBodyById(anyString())).thenReturn(new FileInputStream("temp.xlsx"));
+		given().accept("application/json").get("/excel/123abcd/content").peek().then().assertThat().statusCode(200);
+	}
 
-    @Test
-    public void testListFiles() throws FileNotFoundException {
-       // Mockito.when(excelService.getExcelBodyById(anyString())).thenReturn(new FileInputStream("temp.xlsx"));
-        given().accept("application/json").get("/excel").peek().
-                then().assertThat()
-                .statusCode(200);
-    }
+	@Test
+	public void testListFiles() throws FileNotFoundException {
+		// Mockito.when(excelService.getExcelBodyById(anyString())).thenReturn(new
+		// FileInputStream("temp.xlsx"));
+		given().accept("application/json").get("/excel").peek().then().assertThat().statusCode(200);
+	}
 
-    @Test
-    @Disabled
-    public void testExcelGeneration() throws FileNotFoundException {
-        // Mockito.when(excelService.getExcelBodyById(anyString())).thenReturn(new FileInputStream("temp.xlsx"));
-        given().accept("application/json").contentType(ContentType.JSON).body("{\"headers\":[\"Name\",\"Age\"], \"data\":[[\"Teresa\",\"5\"],[\"Daniel\",\"1\"]]}").post("/excel").peek().
-                then().assertThat()
-                .statusCode(200)
-                .body("fileId", Matchers.notNullValue());
-    }
+	@Test
+	@Disabled
+	public void testExcelGeneration() throws FileNotFoundException {
+		// Mockito.when(excelService.getExcelBodyById(anyString())).thenReturn(new
+		// FileInputStream("temp.xlsx"));
+		given().accept("application/json").contentType(ContentType.JSON)
+				.body("{\"headers\":[\"Name\",\"Age\"], \"data\":[[\"Teresa\",\"5\"],[\"Daniel\",\"1\"]]}")
+				.post("/excel").peek().then().assertThat().statusCode(200).body("fileId", Matchers.notNullValue());
+	}
 }

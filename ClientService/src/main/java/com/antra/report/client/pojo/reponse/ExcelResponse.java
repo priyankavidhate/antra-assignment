@@ -3,85 +3,94 @@ package com.antra.report.client.pojo.reponse;
 import java.time.LocalDateTime;
 
 public class ExcelResponse {
-    private String reqId;
-    private String fileId;
-    private String fileLocation;
-    private long fileSize;
-    private String fileName;
-    private String submitter;
-    private String description;
-    private LocalDateTime generatedTime;
-    private boolean failed;
+	private String reqId;
+	private String fileId;
+	private String fileLocation;
+	private long fileSize;
+	private String fileName;
+	private String submitter;
+	private String description;
+	private LocalDateTime generatedTime;
+	private boolean failed;
+	private String status;
 
-    public String getReqId() {
-        return reqId;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setReqId(String reqId) {
-        this.reqId = reqId;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public String getFileId() {
-        return fileId;
-    }
+	public String getReqId() {
+		return reqId;
+	}
 
-    public void setFileId(String fileId) {
-        this.fileId = fileId;
-    }
+	public void setReqId(String reqId) {
+		this.reqId = reqId;
+	}
 
-    public String getFileLocation() {
-        return fileLocation;
-    }
+	public String getFileId() {
+		return fileId;
+	}
 
-    public void setFileLocation(String fileLocation) {
-        this.fileLocation = fileLocation;
-    }
+	public void setFileId(String fileId) {
+		this.fileId = fileId;
+	}
 
-    public long getFileSize() {
-        return fileSize;
-    }
+	public String getFileLocation() {
+		return fileLocation;
+	}
 
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
-    }
+	public void setFileLocation(String fileLocation) {
+		this.fileLocation = fileLocation;
+	}
 
-    public String getFileName() {
-        return fileName;
-    }
+	public long getFileSize() {
+		return fileSize;
+	}
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
+	}
 
-    public String getSubmitter() {
-        return submitter;
-    }
+	public String getFileName() {
+		return fileName;
+	}
 
-    public void setSubmitter(String submitter) {
-        this.submitter = submitter;
-    }
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getSubmitter() {
+		return submitter;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setSubmitter(String submitter) {
+		this.submitter = submitter;
+	}
 
-    public LocalDateTime getGeneratedTime() {
-        return generatedTime;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setGeneratedTime(LocalDateTime generatedTime) {
-        this.generatedTime = generatedTime;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public boolean isFailed() {
-        return failed;
-    }
+	public LocalDateTime getGeneratedTime() {
+		return generatedTime;
+	}
 
-    public void setFailed(boolean failed) {
-        this.failed = failed;
-    }
+	public void setGeneratedTime(LocalDateTime generatedTime) {
+		this.generatedTime = generatedTime;
+	}
+
+	public boolean isFailed() {
+		return failed;
+	}
+
+	public void setFailed(boolean failed) {
+		this.failed = failed;
+	}
 }

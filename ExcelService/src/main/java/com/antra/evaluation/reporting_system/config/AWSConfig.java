@@ -13,20 +13,19 @@ import java.util.Collections;
 
 @Configuration
 public class AWSConfig {
-    @Bean
-    public QueueMessagingTemplate queueMessagingTemplate(
-            AmazonSQSAsync amazonSQSAsync) {
-        return new QueueMessagingTemplate(amazonSQSAsync);
-    }
+	@Bean
+	public QueueMessagingTemplate queueMessagingTemplate(AmazonSQSAsync amazonSQSAsync) {
+		return new QueueMessagingTemplate(amazonSQSAsync);
+	}
 
-    @Bean
-    public QueueMessageHandlerFactory queueMessageHandlerFactory() {
-        QueueMessageHandlerFactory factory = new QueueMessageHandlerFactory();
-        MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
-        messageConverter.setStrictContentTypeMatch(false);
-        factory.setArgumentResolvers(Collections.<HandlerMethodArgumentResolver>singletonList(new PayloadArgumentResolver(messageConverter)));
-        return factory;
-    }
-
+	@Bean
+	public QueueMessageHandlerFactory queueMessageHandlerFactory() {
+		QueueMessageHandlerFactory factory = new QueueMessageHandlerFactory();
+		MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
+		messageConverter.setStrictContentTypeMatch(false);
+		factory.setArgumentResolvers(Collections
+				.<HandlerMethodArgumentResolver>singletonList(new PayloadArgumentResolver(messageConverter)));
+		return factory;
+	}
 
 }

@@ -1,9 +1,5 @@
-package com.antra.evaluation.reporting_system.pojo.report;
+package com.antra.report.client.pojo.reponse;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
-
-@DynamoDBDocument
 public class Student {
 
 	String id;
@@ -22,7 +18,10 @@ public class Student {
 		this.score = score;
 	}
 
-	@DynamoDBAttribute(attributeName = "score")
+	public Student() {
+
+	}
+	
 	public String getScore() {
 		return score;
 	}
@@ -31,11 +30,6 @@ public class Student {
 		this.score = score;
 	}
 
-	public Student() {
-
-	}
-
-	@DynamoDBAttribute(attributeName = "id")
 	public String getId() {
 		return id;
 	}
@@ -44,7 +38,6 @@ public class Student {
 		this.id = id;
 	}
 
-	@DynamoDBAttribute(attributeName = "name")
 	public String getName() {
 		return name;
 	}
@@ -53,7 +46,6 @@ public class Student {
 		this.name = name;
 	}
 
-	@DynamoDBAttribute(attributeName = "st_class")
 	public String getSt_class() {
 		return st_class;
 	}
@@ -61,5 +53,11 @@ public class Student {
 	public void setSt_class(String st_class) {
 		this.st_class = st_class;
 	}
+
+	@Override
+	public String toString() {
+		return "Student [id=" + id + ", name=" + name + ", st_class=" + st_class + ", score=" + score + "]";
+	}
+	
 
 }
